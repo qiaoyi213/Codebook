@@ -1,22 +1,65 @@
-/*產生fail function*/ 
-void kmp_fail(char *s,int len,int *fail){
-	int id=-1;
-	fail[0]=-1;
-	for(int i=1;i<len;++i){
-		while(~id&&s[id+1]!=s[i])id=fail[id];
-		if(s[id+1]==s[i])++id;
-		fail[i]=id;
-	}
-}
-/*以字串B匹配字串A，傳回匹配成功的數量(用B的fail)*/
-int kmp_match(char *A,int lenA,char *B,int lenB,int *fail){
-	int id=-1,ans=0;
-	for(int i=0;i<lenA;++i){
-		while(~id&&B[id+1]!=A[i])id=fail[id];
-		if(B[id+1]==A[i])++id;
-		if(id==lenB-1){/*匹配成功*/
-			++ans, id=fail[id];
+#include<bits/stdc++.h>
+using namespace std;
+//#define int long long
+#define IOS ios::sync_with_stdio(0);cin.tie(0);
+vector<int> v(1005);
+void build_next(string T){
+	v[0] = 0;
+	int pre_len = 0;
+	int	i = 1;
+	while(i<T.length()){
+		if(T[pre_len] == T[i]){
+			pre_len++;
+			v.push_back(pre_len);
+			i++;
+		} else { 
+			if(pre_len > 0){
+				pre_len = v[pre_len-1];
+			}
+			if(pre_len == 0){
+				v.push_back(0);
+				i++;
+			}
 		}
 	}
-	return ans;
 }
+bool KMP(string S, string T){
+	build_next(T);
+	int i=0,j=0;
+	while(i<S.length()){
+		if(S[i] == T[j]){
+			i++;
+			j++;
+		} else if(j>0){
+			j = v[j-1];
+		} else {
+			i++;
+		}
+
+		if(j == T.length()){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
+int32_t main(){
+	int k;
+	cin>>k;
+	while(k--){
+		int q;
+		string s;
+		cin>>s;
+		cin>>q;
+		while(q--){
+			string t;
+			cin>>t;
+			if(KMP(s,t) == 1)cout<<"y"<<endl;
+			else cout<<"n"<<endl;
+		
+		}
+	}
+	return 0;
+}
+
